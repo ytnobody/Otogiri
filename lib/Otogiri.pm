@@ -138,7 +138,7 @@ Insert data. Then, returns row data.
 
 =head2 fast_insert
 
-    $db->insert($table_name => $columns_in_hashref);
+    $db->fast_insert($table_name => $columns_in_hashref);
 
 Insert data simply.
 
@@ -182,7 +182,7 @@ Execute specified SQL.
 
     my $txn = $db->txn_scope;
 
-returns DBIx::TransactionManager::ScopeGuard's instance. See L<DBIx::TransactionManager> to more infomation.
+returns DBIx::TransactionManager::ScopeGuard's instance. See L<DBIx::TransactionManager> to more information.
 
 =head1 LICENSE
 
