@@ -31,6 +31,11 @@ sub new {
 sub select {
     my $self = shift;
     my ($sql, @binds) = $self->maker->select(shift, ['*'], @_);
+    $self->select_by_sql($sql, @binds);
+}
+
+sub search_by_sql {
+    my ($self, $sql, @binds) = @_;
     my $rtn = $self->dbh->select_all($sql, @binds);
     $rtn ? @$rtn : ();
 }
@@ -43,10 +48,15 @@ sub single {
 
 sub insert {
     my $self = shift;
-    my ($sql, @binds) = $self->maker->insert(@_);
-    if ($self->dbh->query($sql, @binds)) {
+    if ($self->fast_insert(@_)) {
         return $self->single(shift, @_);
     }
+}
+
+sub fast_insert {
+    my $self = shift;
+    my ($sql, @binds) = $self->maker->insert(@_);
+    $self->dbh->query($sql, @binds);
 }
 
 sub delete {
