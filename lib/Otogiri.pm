@@ -71,6 +71,11 @@ sub update {
     $self->dbh->query($sql, @binds);
 }
 
+sub do {
+    my $self = shift;
+    $self->dbh->query(@_);
+}
+
 sub txn_scope {
     my $self = shift;
     $self->dbh->txn_scope;

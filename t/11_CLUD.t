@@ -3,19 +3,23 @@ use warnings;
 use Test::More;
 use Otogiri;
 
-use File::Spec;
-use File::Basename 'dirname';
-
-my $sqlfile = File::Spec->catfile(dirname(__FILE__), qw/fixture.sql/);
-my $dbfile  = File::Spec->catfile(dirname(__FILE__), qw/testdb.sqlite3/);
-
-### XXX I want more cool approach here ...
-unlink $dbfile if -e $dbfile;
-system("sqlite3 $dbfile < $sqlfile");
+my $dbfile  = ':memory:';
 
 my $db = Otogiri->new( connect_info => ["dbi:SQLite:dbname=$dbfile", '', ''] );
 isa_ok $db, 'Otogiri';
-can_ok $db, qw/insert select single delete update txn_scope dbh maker/;
+can_ok $db, qw/insert fast_insert select single search_by_sql delete update txn_scope dbh maker do/;
+
+my $sql = <<'EOF';
+CREATE TABLE member (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    name       TEXT    NOT NULL,
+    age        INTEGER NOT NULL DEFAULT 20,
+    sex        TEXT    NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER
+);
+EOF
+$db->do($sql);
 
 subtest insert => sub {
     my $time = time;
