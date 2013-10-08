@@ -56,7 +56,7 @@ Insert data. Then, returns row data.
 
 ## fast\_insert
 
-    $db->insert($table_name => $columns_in_hashref);
+    $db->fast_insert($table_name => $columns_in_hashref);
 
 Insert data simply.
 
@@ -100,7 +100,7 @@ Execute specified SQL.
 
     my $txn = $db->txn_scope;
 
-returns DBIx::TransactionManager::ScopeGuard's instance. See [DBIx::TransactionManager](http://search.cpan.org/perldoc?DBIx::TransactionManager) to more infomation.
+returns DBIx::TransactionManager::ScopeGuard's instance. See [DBIx::TransactionManager](http://search.cpan.org/perldoc?DBIx::TransactionManager) to more information.
 
 # LICENSE
 
