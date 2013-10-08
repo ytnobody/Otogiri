@@ -31,7 +31,7 @@ sub new {
 sub select {
     my $self = shift;
     my ($sql, @binds) = $self->maker->select(shift, ['*'], @_);
-    $self->select_by_sql($sql, @binds);
+    $self->search_by_sql($sql, @binds);
 }
 
 sub search_by_sql {

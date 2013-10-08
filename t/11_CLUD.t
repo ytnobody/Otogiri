@@ -78,6 +78,17 @@ subtest fast_insert_and_search_by_sql => sub {
     is $rows[0]->{sex}, 'female';
 };
 
+subtest select => sub {
+    my @rows = $db->select(member => {sex => 'male'});
+    is scalar(@rows), 2;
+    is $rows[0]->{name}, 'ytnobody';
+    is $rows[0]->{sex}, 'male';
+    @rows = $db->select(member => {sex => 'female'});
+    is scalar(@rows), 1;
+    is $rows[0]->{name}, 'airwife';
+    is $rows[0]->{sex}, 'female';
+};
+
 subtest delete => sub {
     my $tonkichi = $db->single(member => {name => 'tonkichi'});
     $db->delete(member => {name => 'tonkichi'});
