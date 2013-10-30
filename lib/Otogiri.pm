@@ -28,22 +28,39 @@ sub new {
     return $self;
 }
 
+sub _deflate_param {
+    my ($self, $param) = @_;
+    if ($self->{deflate}) {
+        $param = $self->{deflate}->({%$param});
+    }
+    return $param;
+}
+
+sub _inflate_rows {
+    my ($self, @rows) = @_;
+    @rows = $self->{inflate} ? map {$self->{inflate}->($_)} @rows : @rows;
+    wantarray ? @rows : $rows[0];
+}
+
 sub select {
-    my $self = shift;
-    my ($sql, @binds) = $self->maker->select(shift, ['*'], @_);
+    my ($self, $table, $param, @opts) = @_;
+    $param = $self->_deflate_param($param);
+    my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
     $self->search_by_sql($sql, @binds);
 }
 
 sub search_by_sql {
     my ($self, $sql, @binds) = @_;
     my $rtn = $self->dbh->select_all($sql, @binds);
-    $rtn ? @$rtn : ();
+    my @rows = $rtn ? $self->_inflate_rows(@$rtn) : ();
 }
 
 sub single {
-    my $self = shift;
-    my ($sql, @binds) = $self->maker->select(shift, ['*'], @_);
-    $self->dbh->select_row($sql, @binds);
+    my ($self, $table, $param, @opts) = @_;
+    $param = $self->_deflate_param($param);
+    my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
+    my $row = $self->dbh->select_row($sql, @binds);
+    $self->{inflate} ? $self->_inflate_rows($row) : $row;
 }
 
 sub insert {
@@ -54,20 +71,23 @@ sub insert {
 }
 
 sub fast_insert {
-    my $self = shift;
-    my ($sql, @binds) = $self->maker->insert(@_);
+    my ($self, $table, $param, @opts) = @_;
+    $param = $self->_deflate_param($param);
+    my ($sql, @binds) = $self->maker->insert($table, $param, @opts);
     $self->dbh->query($sql, @binds);
 }
 
 sub delete {
-    my $self = shift;
-    my ($sql, @binds) = $self->maker->delete(@_);
+    my ($self, $table, $param, @opts) = @_;
+    $param = $self->_deflate_param($param);
+    my ($sql, @binds) = $self->maker->delete($table, $param, @opts);
     $self->dbh->query($sql, @binds);
 }
 
 sub update {
-    my $self = shift;
-    my ($sql, @binds) = $self->maker->update(@_);
+    my ($self, $table, $param, @opts) = @_;
+    $param = $self->_deflate_param($param);
+    my ($sql, @binds) = $self->maker->update($table, $param, @opts);
     $self->dbh->query($sql, @binds);
 }
 
