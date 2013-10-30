@@ -64,7 +64,7 @@ You may specify column inflation logic.
 
 Specified code is called internally when called select(), search\_by\_sql(), and single().
 
-## deflate
+## deflate (optional)
 
     use JSON;
     deflate => sub {

@@ -166,7 +166,7 @@ You may specify column inflation logic.
 
 Specified code is called internally when called select(), search_by_sql(), and single().
 
-=head2 deflate
+=head2 deflate (optional)
 
     use JSON;
     deflate => sub {
