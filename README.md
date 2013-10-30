@@ -40,6 +40,46 @@ Otogiri - A lightweight medicine for using database
 
 Otogiri is one of ORM. A slogan is "Schema-less, Fat-less".
 
+# ATTRIBUTE
+
+## connect\_info (required)
+
+    connect_info => [$dsn, $dbuser, $dbpass],
+
+You have to specify dsn, dbuser, and dbpass, to connect to database.
+
+## inflate (optional)
+
+    use JSON;
+    inflate => sub {
+        my ($data, $tablename) = @_;
+        if (defined $data->{json}) {
+            $data->{json} = decode_json($data->{json});
+        }
+        $data->{table} = $tablename;
+        $data;
+    },
+
+You may specify column inflation logic. 
+
+Specified code is called internally when called select(), search\_by\_sql(), and single().
+
+## deflate
+
+    use JSON;
+    deflate => sub {
+        my ($data, $tablename) = @_;
+        if (defined $data->{json}) {
+            $data->{json} = encode_json($data->{json});
+        }
+        delete $data->{table};
+        $data;
+    },
+
+You may specify column deflation logic.
+
+Specified code is called internally when called insert(), update(), and delete().
+
 # METHODS
 
 ## new
@@ -47,6 +87,8 @@ Otogiri is one of ORM. A slogan is "Schema-less, Fat-less".
     my $db = Otogiri->new( connect_info => [$dsn, $dbuser, $dbpass] );
 
 Instantiate and connect to db.
+
+Please see ATTRIBUTE section.
 
 ## insert
 

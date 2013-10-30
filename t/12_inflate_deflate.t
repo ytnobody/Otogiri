@@ -9,38 +9,102 @@ use JSON;
 my $json = JSON->new->utf8(1);
 my $dbfile  = ':memory:';
 
-my $db = Otogiri->new( 
-    connect_info => ["dbi:SQLite:dbname=$dbfile", '', ''],
-    inflate => sub {
-        my $row = shift;
-        $row->{data} = $json->decode($row->{data}) if defined $row->{data};
-        $row;
-    },
-    deflate => sub {
-        my $row = shift;
-        $row->{data} = $json->encode($row->{data}) if defined $row->{data};
-        $row;
+{
+    package 
+        Otogiri::Test::Row;
+    our $AUTOLOAD;
+    sub AUTOLOAD {
+        my ($self, $val) = @_;
+        my ($method) = $AUTOLOAD =~ /^(?:.+)\:\:(.+?)$/;
+        return if $method =~ /^[A-Z]/;
+        $self->{data}{$method} = $val if defined $val;
+        $self->{data}{$method};
     }
-);
+    sub new {
+        my ($class, $table, %opts) = @_;
+        bless {data => {%opts}, __METADATA => {table => $table}}, $class;
+    }
+    sub table {
+        my $self = shift;
+        $self->{__METADATA}{table};
+    }
+    sub as_hashref {
+        my $self = shift;
+        $self->{data};
+    }
+};
 
-my $sql = <<'EOF';
+subtest basic => sub {
+    my $db = Otogiri->new( 
+        connect_info => ["dbi:SQLite:dbname=$dbfile", '', ''],
+        inflate => sub {
+            my $row = shift;
+            $row->{data} = $json->decode($row->{data}) if defined $row->{data};
+            $row;
+        },
+        deflate => sub {
+            my $row = shift;
+            $row->{data} = $json->encode($row->{data}) if defined $row->{data};
+            $row;
+        }
+    );
+
+    my $sql = <<'EOF';
 CREATE TABLE free_data (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     data       TEXT
 );
 EOF
-$db->do($sql);
 
-my $row = $db->insert(free_data => {
-    data => {
-        name     => 'ytnobody', 
-        age      => 32,
-        favolite => [qw/Soba Zohni Akadashi/],
-    },
-});
+    $db->do($sql);
+    my $row = $db->insert(free_data => {
+        data => {
+            name     => 'ytnobody', 
+            age      => 32,
+            favolite => [qw/Soba Zohni Akadashi/],
+        },
+    });
+    
+    is $row->{data}{name}, 'ytnobody';
+    is $row->{data}{age}, 32;
+    is_deeply $row->{data}{favolite}, [qw/Soba Zohni Akadashi/];
+};
 
-is $row->{data}{name}, 'ytnobody';
-is $row->{data}{age}, 32;
-is_deeply $row->{data}{favolite}, [qw/Soba Zohni Akadashi/];
+subtest row_obj => sub {
+    my $db = Otogiri->new( 
+        connect_info => ["dbi:SQLite:dbname=$dbfile", '', ''],
+        inflate => sub {
+            my ($row, $table) = @_;
+            Otogiri::Test::Row->new($table, %$row);
+        },
+    );
+
+    my $sql = <<'EOF';
+CREATE TABLE member (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    name       TEXT    NOT NULL,
+    age        INTEGER NOT NULL DEFAULT 20,
+    sex        TEXT    NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER
+);
+EOF
+
+    $db->do($sql);
+
+    my $param = {
+        name       => 'ytnobody', 
+        age        => 32,
+        sex        => 'male',
+        created_at => time,
+    };
+    
+    my $member = $db->insert(member => $param);
+
+    isa_ok $member, 'Otogiri::Test::Row';
+    is $member->name, 'ytnobody';
+    is $member->age, 32;
+    is $member->sex, 'male';
+};
 
 done_testing;

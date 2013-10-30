@@ -29,22 +29,22 @@ sub new {
 }
 
 sub _deflate_param {
-    my ($self, $param) = @_;
+    my ($self, $table, $param) = @_;
     if ($self->{deflate}) {
-        $param = $self->{deflate}->({%$param});
+        $param = $self->{deflate}->({%$param}, $table);
     }
     return $param;
 }
 
 sub _inflate_rows {
-    my ($self, @rows) = @_;
-    @rows = $self->{inflate} ? map {$self->{inflate}->($_)} @rows : @rows;
+    my ($self, $table, @rows) = @_;
+    @rows = $self->{inflate} ? map {$self->{inflate}->($_, $table)} @rows : @rows;
     wantarray ? @rows : $rows[0];
 }
 
 sub select {
     my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($param);
+    $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
     $self->search_by_sql($sql, @binds);
 }
@@ -52,15 +52,15 @@ sub select {
 sub search_by_sql {
     my ($self, $sql, @binds) = @_;
     my $rtn = $self->dbh->select_all($sql, @binds);
-    my @rows = $rtn ? $self->_inflate_rows(@$rtn) : ();
+    my @rows = $rtn ? $self->_inflate_rows(undef, @$rtn) : ();
 }
 
 sub single {
     my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($param);
+    $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
     my $row = $self->dbh->select_row($sql, @binds);
-    $self->{inflate} ? $self->_inflate_rows($row) : $row;
+    $self->{inflate} ? $self->_inflate_rows($table, $row) : $row;
 }
 
 sub insert {
@@ -72,21 +72,21 @@ sub insert {
 
 sub fast_insert {
     my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($param);
+    $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->insert($table, $param, @opts);
     $self->dbh->query($sql, @binds);
 }
 
 sub delete {
     my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($param);
+    $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->delete($table, $param, @opts);
     $self->dbh->query($sql, @binds);
 }
 
 sub update {
     my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($param);
+    $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->update($table, $param, @opts);
     $self->dbh->query($sql, @binds);
 }
@@ -142,6 +142,46 @@ Otogiri - A lightweight medicine for using database
 
 Otogiri is one of ORM. A slogan is "Schema-less, Fat-less".
 
+=head1 ATTRIBUTE
+
+=head2 connect_info (required)
+
+   connect_info => [$dsn, $dbuser, $dbpass],
+
+You have to specify dsn, dbuser, and dbpass, to connect to database.
+
+=head2 inflate (optional)
+
+    use JSON;
+    inflate => sub {
+        my ($data, $tablename) = @_;
+        if (defined $data->{json}) {
+            $data->{json} = decode_json($data->{json});
+        }
+        $data->{table} = $tablename;
+        $data;
+    },
+
+You may specify column inflation logic. 
+
+Specified code is called internally when called select(), search_by_sql(), and single().
+
+=head2 deflate
+
+    use JSON;
+    deflate => sub {
+        my ($data, $tablename) = @_;
+        if (defined $data->{json}) {
+            $data->{json} = encode_json($data->{json});
+        }
+        delete $data->{table};
+        $data;
+    },
+
+You may specify column deflation logic.
+
+Specified code is called internally when called insert(), update(), and delete().
+
 =head1 METHODS
 
 =head2 new
@@ -149,6 +189,8 @@ Otogiri is one of ORM. A slogan is "Schema-less, Fat-less".
     my $db = Otogiri->new( connect_info => [$dsn, $dbuser, $dbpass] );
 
 Instantiate and connect to db.
+
+Please see ATTRIBUTE section.
 
 =head2 insert
 

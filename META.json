@@ -50,6 +50,7 @@
       },
       "test" : {
          "requires" : {
+            "JSON" : "0",
             "Test::More" : "0.98"
          }
       }
