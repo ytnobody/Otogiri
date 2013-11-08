@@ -101,6 +101,11 @@ sub txn_scope {
     $self->dbh->txn_scope;
 }
 
+sub last_insert_id {
+    my $self = shift;
+    $self->dbh->last_insert_id;
+}
+
 1;
 __END__
 
@@ -245,6 +250,13 @@ Execute specified SQL.
     my $txn = $db->txn_scope;
 
 returns DBIx::TransactionManager::ScopeGuard's instance. See L<DBIx::TransactionManager> to more information.
+
+=head2 last_insert_id 
+
+    my $id = $db->last_insert_id([@args]);
+
+returns last_insert_id. (mysql_insertid in MySQL or last_insert_rowid in SQLite)
+
 
 =head1 LICENSE
 
