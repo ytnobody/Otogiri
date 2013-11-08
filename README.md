@@ -144,6 +144,14 @@ Execute specified SQL.
 
 returns DBIx::TransactionManager::ScopeGuard's instance. See [DBIx::TransactionManager](http://search.cpan.org/perldoc?DBIx::TransactionManager) to more information.
 
+## last\_insert\_id 
+
+    my $id = $db->last_insert_id([@args]);
+
+returns last\_insert\_id. (mysql\_insertid in MySQL or last\_insert\_rowid in SQLite)
+
+
+
 # LICENSE
 
 Copyright (C) ytnobody.
