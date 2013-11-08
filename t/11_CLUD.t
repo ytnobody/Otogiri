@@ -36,6 +36,7 @@ subtest insert => sub {
     for my $key (keys %$param) {
         is $member->{$key}, $param->{$key}, "$key is ". $param->{$key};
     }
+    is $member->{id}, $db->last_insert_id();
 };
 
 subtest transaction_and_update => sub {
