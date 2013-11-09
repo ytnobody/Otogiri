@@ -103,7 +103,7 @@ sub txn_scope {
 
 sub last_insert_id {
     my $self = shift;
-    $self->dbh->last_insert_id;
+    $self->dbh->last_insert_id(@_);
 }
 
 1;
