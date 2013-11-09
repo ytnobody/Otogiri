@@ -2,6 +2,9 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.03 2013-11-09T05:00:04Z
+    - bug fix: args for last_inserted_id() [tsucchi++]
+
 0.02 2013-11-08T08:36:37Z
     - feature: add last_inserted_id() [tsucchi++]
 
