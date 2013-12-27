@@ -116,9 +116,9 @@ Select from specified table. Then, returns first of matched rows.
 
 ## search\_by\_sql
 
-    my @rows = $db->search_by_sql($sql, @bind_vals);
+    my @rows = $db->search_by_sql($sql, \@bind_vals [, $table_name]);
 
-Select by specified SQL. Then, returns matched rows as array.
+Select by specified SQL. Then, returns matched rows as array. $table\_name is optional and used for inflate parameter.
 
 ## update
 

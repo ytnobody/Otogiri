@@ -46,13 +46,14 @@ sub select {
     my ($self, $table, $param, @opts) = @_;
     $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
-    $self->search_by_sql($sql, @binds);
+    $self->search_by_sql($sql, \@binds, $table);
 }
 
 sub search_by_sql {
-    my ($self, $sql, @binds) = @_;
+    my ($self, $sql, $binds_aref, $table) = @_;
+    my @binds = @{$binds_aref};
     my $rtn = $self->dbh->select_all($sql, @binds);
-    my @rows = $rtn ? $self->_inflate_rows(undef, @$rtn) : ();
+    my @rows = $rtn ? $self->_inflate_rows($table, @$rtn) : ();
 }
 
 sub single {
@@ -223,9 +224,9 @@ Select from specified table. Then, returns first of matched rows.
 
 =head2 search_by_sql
 
-    my @rows = $db->search_by_sql($sql, @bind_vals);
+    my @rows = $db->search_by_sql($sql, \@bind_vals [, $table_name]);
 
-Select by specified SQL. Then, returns matched rows as array.
+Select by specified SQL. Then, returns matched rows as array. $table_name is optional and used for inflate parameter.
 
 =head2 update
 

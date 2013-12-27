@@ -69,11 +69,12 @@ subtest rollback => sub {
 
 subtest fast_insert_and_search_by_sql => sub {
     $db->fast_insert(member => {name => 'airwife', sex => 'female', created_at => time});
-    my @rows = $db->search_by_sql('SELECT * FROM member WHERE sex=? ORDER BY id', 'male');
+    my @rows = $db->search_by_sql('SELECT * FROM member WHERE sex=? ORDER BY id', ['male']);
     is scalar(@rows), 2;
     is $rows[0]->{name}, 'ytnobody';
     is $rows[0]->{sex}, 'male';
-    @rows = $db->search_by_sql('SELECT * FROM member WHERE sex=?', 'female');
+
+    @rows = $db->search_by_sql('SELECT * FROM member WHERE sex=?', ['female']);
     is scalar(@rows), 1;
     is $rows[0]->{name}, 'airwife';
     is $rows[0]->{sex}, 'female';

@@ -107,4 +107,60 @@ EOF
     is $member->sex, 'male';
 };
 
+
+subtest inflate_for_select => sub {
+    my $db = Otogiri->new( 
+        connect_info => ["dbi:SQLite:dbname=$dbfile", '', ''],
+        inflate => sub {
+            my ($row, $table_name) = @_;
+            if ( defined $row->{data} ) {
+                $row->{data} = $json->decode($row->{data});
+                $row->{data}->{table_name_in_inflate} = $table_name;
+            }
+            $row;
+        },
+        deflate => sub {
+            my ($row, $table_name) = @_;
+            if ( defined $row->{data} ) {
+                $row->{data}{table_name_in_deflate} = $table_name;
+                $row->{data} = $json->encode($row->{data});
+            }
+            $row;
+        }
+    );
+
+    my $sql = <<'EOF';
+CREATE TABLE free_data2 (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    data       TEXT
+);
+EOF
+
+    $db->do($sql);
+    $db->fast_insert(free_data2 => {
+        data => {
+            name     => 'ytnobody', 
+            favolite => [qw/Soba Zohni Akadashi/],
+        },
+    });
+    $db->fast_insert(free_data2 => {
+        data => {
+            name     => 'tsucchi', 
+            favolite => [qw/Ramen Sushi/],
+        },
+    });
+    my @rows = $db->select('free_data2', {});
+    is( @rows, 2 );
+    my ($row1, $row2) = @rows;
+    is $row1->{data}{name}, 'ytnobody';
+    is $row1->{data}{table_name_in_inflate}, 'free_data2';
+    is $row1->{data}{table_name_in_deflate}, 'free_data2';
+    is_deeply $row1->{data}{favolite}, [qw/Soba Zohni Akadashi/];
+
+    is $row2->{data}{name}, 'tsucchi';
+    is $row2->{data}{table_name_in_inflate}, 'free_data2';
+    is $row2->{data}{table_name_in_deflate}, 'free_data2';
+    is_deeply $row2->{data}{favolite}, [qw/Ramen Sushi/];
+};
+
 done_testing;
