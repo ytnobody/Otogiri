@@ -2,6 +2,13 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.04 2013-12-27T00:15:04Z
+    - incompatible change [tsucchi++]
+      search_by_sql($sql, @binds) -> search_by_sql($sql, $binds_aref, $table)
+
+      In previous release, when select/search_by_sql calls inflate method, $table(table name) is not passed to inflate method. 
+      This change enables to pass $table to inflate method.
+
 0.03 2013-11-09T05:00:04Z
     - bug fix: args for last_inserted_id() [tsucchi++]
 
