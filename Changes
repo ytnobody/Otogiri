@@ -2,6 +2,9 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.05 2013-12-28T15:53:17Z
+    - bug fix: single() returns a void hashref if WHERE-clause is not matched to rows. [ytnobody]
+
 0.04 2013-12-27T00:15:04Z
     - incompatible change [tsucchi++]
       search_by_sql($sql, @binds) -> search_by_sql($sql, $binds_aref, $table)
