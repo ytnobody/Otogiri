@@ -5,106 +5,11 @@ use warnings;
 
 our $VERSION = "0.05";
 
-use Class::Accessor::Lite (
-    ro => [qw/connect_info/],
-    rw => [qw/dbh maker/],
-    new => 0,
-);
-
-use SQL::Maker;
-use DBIx::Sunny;
+use DBIx::Otogiri;
 
 sub new {
     my ($class, %opts) = @_;
-    my $self = bless {%opts}, $class;
-    ( $self->{dsn}{scheme},
-      $self->{dsn}{driver},
-      $self->{dsn}{attr_str},
-      $self->{dsn}{attributes},
-      $self->{dsn}{driver_dsn}
-    ) = DBI->parse_dsn($self->{connect_info}[0]);
-    $self->{dbh}   = DBIx::Sunny->connect(@{$self->{connect_info}});
-    $self->{maker} = SQL::Maker->new(driver => $self->{dsn}{driver});
-    return $self;
-}
-
-sub _deflate_param {
-    my ($self, $table, $param) = @_;
-    if ($self->{deflate}) {
-        $param = $self->{deflate}->({%$param}, $table);
-    }
-    return $param;
-}
-
-sub _inflate_rows {
-    my ($self, $table, @rows) = @_;
-    @rows = $self->{inflate} ? map {$self->{inflate}->($_, $table)} grep {defined $_} @rows : @rows;
-    wantarray ? @rows : $rows[0];
-}
-
-sub select {
-    my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($table, $param);
-    my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
-    $self->search_by_sql($sql, \@binds, $table);
-}
-
-sub search_by_sql {
-    my ($self, $sql, $binds_aref, $table) = @_;
-    my @binds = @{$binds_aref};
-    my $rtn = $self->dbh->select_all($sql, @binds);
-    my @rows = $rtn ? $self->_inflate_rows($table, @$rtn) : ();
-}
-
-sub single {
-    my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($table, $param);
-    my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
-    my $row = $self->dbh->select_row($sql, @binds);
-    $self->{inflate} ? $self->_inflate_rows($table, $row) : $row;
-}
-
-sub insert {
-    my $self = shift;
-    if ($self->fast_insert(@_)) {
-        return $self->single(shift, @_);
-    }
-}
-
-sub fast_insert {
-    my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($table, $param);
-    my ($sql, @binds) = $self->maker->insert($table, $param, @opts);
-    $self->dbh->query($sql, @binds);
-}
-
-sub delete {
-    my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($table, $param);
-    my ($sql, @binds) = $self->maker->delete($table, $param, @opts);
-    $self->dbh->query($sql, @binds);
-}
-
-sub update {
-    my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($table, $param);
-    my ($sql, @binds) = $self->maker->update($table, $param, @opts);
-    $self->dbh->query($sql, @binds);
-}
-
-sub do {
-    my $self = shift;
-    $self->dbh->query(@_);
-}
-
-sub txn_scope {
-    my $self = shift;
-    $self->dbh->txn_scope;
-}
-
-sub last_insert_id {
-    my $self = shift;
-    $self->dbh->last_insert_id(@_);
+    DBIx::Otogiri->new(%opts);
 }
 
 1;
@@ -146,7 +51,7 @@ Otogiri - A lightweight medicine for using database
 
 =head1 DESCRIPTION
 
-Otogiri is one of ORM. A slogan is "Schema-less, Fat-less".
+Otogiri is a thing that like as ORM. A slogan is "Schema-less, Fat-less".
 
 =head1 ATTRIBUTE
 
@@ -198,67 +103,6 @@ Instantiate and connect to db.
 
 Please see ATTRIBUTE section.
 
-=head2 insert
-
-    my $row = $db->insert($table_name => $columns_in_hashref);
-
-Insert data. Then, returns row data.
-
-=head2 fast_insert
-
-    $db->fast_insert($table_name => $columns_in_hashref);
-
-Insert data simply.
-
-=head2 select
-
-    my @rows = $db->select($table_name => $conditions_in_hashref [,@options]);
-
-Select from specified table. Then, returns matched rows as array.
-
-=head2 single
-
-    my $row = $db->single($table_name => $conditions_in_hashref [,@options]);
-
-Select from specified table. Then, returns first of matched rows.
-
-=head2 search_by_sql
-
-    my @rows = $db->search_by_sql($sql, \@bind_vals [, $table_name]);
-
-Select by specified SQL. Then, returns matched rows as array. $table_name is optional and used for inflate parameter.
-
-=head2 update
-
-    $db->update($table_name => [update_col_1 => $new_value_1, ...], $conditions_in_hashref);
-
-Update rows that matched to $conditions_in_hashref.
-
-=head2 delete
-
-    $db->delete($table_name => $conditions_in_hashref);
-
-Delete rows that matched to $conditions_in_hashref.
-
-=head2 do
-
-    $db->do($sql, @bind_vals);
-
-Execute specified SQL.
-
-=head2 txn_scope 
-
-    my $txn = $db->txn_scope;
-
-returns DBIx::TransactionManager::ScopeGuard's instance. See L<DBIx::TransactionManager> to more information.
-
-=head2 last_insert_id 
-
-    my $id = $db->last_insert_id([@args]);
-
-returns last_insert_id. (mysql_insertid in MySQL or last_insert_rowid in SQLite)
-
-
 =head1 LICENSE
 
 Copyright (C) ytnobody.
@@ -271,6 +115,8 @@ it under the same terms as Perl itself.
 ytnobody E<lt>ytnobody@gmail.comE<gt>
 
 =head1 SEE ALSO
+
+L<DBIx::Otogiri>
 
 L<DBIx::Sunny>
 

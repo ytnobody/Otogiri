@@ -6,7 +6,7 @@ use Otogiri;
 my $dbfile  = ':memory:';
 
 my $db = Otogiri->new( connect_info => ["dbi:SQLite:dbname=$dbfile", '', ''] );
-isa_ok $db, 'Otogiri';
+isa_ok $db, 'DBIx::Otogiri';
 can_ok $db, qw/insert fast_insert select single search_by_sql delete update txn_scope dbh maker do/;
 
 my $sql = <<'EOF';
