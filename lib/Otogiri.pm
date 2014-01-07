@@ -99,7 +99,7 @@ Specified code is called internally when called insert(), update(), and delete()
 
     my $db = Otogiri->new( connect_info => [$dsn, $dbuser, $dbpass] );
 
-Instantiate and connect to db.
+Instantiate and connect to db. Then, it returns L<DBIx::Otogiri> object.
 
 Please see ATTRIBUTE section.
 
