@@ -2,6 +2,10 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.06 2014-01-14T09:12:45Z
+    - incompatible change [ytnobody]
+      Transfer core feature to DBIx::Otogiri
+
 0.05 2013-12-28T15:53:17Z
     - bug fix: single() returns a void hashref if WHERE-clause is not matched to rows. [ytnobody]
 
