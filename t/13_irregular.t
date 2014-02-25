@@ -37,7 +37,14 @@ subtest broken_query => sub {
             'member'
         );
     } 'select query to non exists table';
+
     my $filename = __FILE__;
+
+    ### for MSWin32 :(
+    if ($^O eq 'MSWin32') {
+        $filename =~ s/\\/\\\\/g;
+    }
+
     like $@, qr|$filename|, 'check filename that contains into comment in SQL';
 };
 
