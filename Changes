@@ -2,6 +2,10 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.07 2014-02-25T06:25:04Z
+    - Fix about failure in testing on MSWin32 system [ytnobody]
+      Cause is path separator. 
+
 0.06 2014-01-14T09:12:45Z
     - incompatible change [ytnobody]
       Transfer core feature to DBIx::Otogiri
