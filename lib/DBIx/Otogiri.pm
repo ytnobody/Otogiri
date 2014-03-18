@@ -49,7 +49,7 @@ sub select {
 
 sub search_by_sql {
     my ($self, $sql, $binds_aref, $table) = @_;
-    my @binds = @{$binds_aref};
+    my @binds = @{$binds_aref || []};
     my $rtn = $self->dbh->select_all($sql, @binds);
     my @rows = $rtn ? $self->_inflate_rows($table, @$rtn) : ();
 }
