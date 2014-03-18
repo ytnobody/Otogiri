@@ -2,6 +2,8 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.08 2014-03-18T04:14:00Z
+
     - only for PostgreSQL: using LASTVAL() when sequence name is not passed. [tsucchi]
     - search_by_sql() accepts empty arrayref. [tsucchi]
 
