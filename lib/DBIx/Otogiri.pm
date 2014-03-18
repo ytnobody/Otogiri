@@ -157,7 +157,7 @@ DBIx::Otogiri is core feature class of Otogiri.
 
    connect_info => [$dsn, $dbuser, $dbpass],
 
-You have to specify dsn, dbuser, and dbpass, to connect to database.
+You have to specify C<dsn>, C<dbuser>, and C<dbpass>, to connect to database.
 
 =head2 inflate (optional)
 

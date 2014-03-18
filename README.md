@@ -46,7 +46,7 @@ Otogiri is a thing that like as ORM. A slogan is "Schema-less, Fat-less".
 
     connect_info => [$dsn, $dbuser, $dbpass],
 
-You have to specify dsn, dbuser, and dbpass, to connect to database.
+You have to specify `dsn`, `dbuser`, and `dbpass`, to connect to database.
 
 ## inflate (optional)
 
