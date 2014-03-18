@@ -2,6 +2,9 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.09 2014-03-18T05:07:22Z
+    - nothing is changed from 0.0.8(previous is unauthorized release)
+
 0.08 2014-03-18T04:14:00Z
 
     - only for PostgreSQL: using LASTVAL() when sequence name is not passed. [tsucchi]
