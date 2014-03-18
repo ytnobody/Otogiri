@@ -2,6 +2,9 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+    - only for PostgreSQL: using LASTVAL() when sequence name is not passed. [tsucchi]
+    - search_by_sql() accepts empty arrayref. [tsucchi]
+
 0.07 2014-02-25T06:25:04Z
     - Fix about failure in testing on MSWin32 system [ytnobody]
       Cause is path separator. 
