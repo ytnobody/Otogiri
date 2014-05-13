@@ -112,17 +112,19 @@ subtest inflate_for_select => sub {
     my $db = Otogiri->new( 
         connect_info => ["dbi:SQLite:dbname=$dbfile", '', ''],
         inflate => sub {
-            my ($row, $table_name) = @_;
+            my ($row, $table_name, $handle) = @_;
             if ( defined $row->{data} ) {
                 $row->{data} = $json->decode($row->{data});
-                $row->{data}->{table_name_in_inflate} = $table_name;
+                $row->{data}{table_name_in_inflate} = $table_name;
+                $row->{data}{handle_in_inflate} = $handle;
             }
             $row;
         },
         deflate => sub {
-            my ($row, $table_name) = @_;
+            my ($row, $table_name, $handle) = @_;
             if ( defined $row->{data} ) {
                 $row->{data}{table_name_in_deflate} = $table_name;
+                $row->{data}{handle_in_deflate} = ref $handle;
                 $row->{data} = $json->encode($row->{data});
             }
             $row;
@@ -155,6 +157,8 @@ EOF
     is $row1->{data}{name}, 'ytnobody';
     is $row1->{data}{table_name_in_inflate}, 'free_data2';
     is $row1->{data}{table_name_in_deflate}, 'free_data2';
+    is ref $row1->{data}{handle_in_inflate}, 'DBIx::Otogiri';
+    is $row1->{data}{handle_in_deflate},     'DBIx::Otogiri';
     is_deeply $row1->{data}{favolite}, [qw/Soba Zohni Akadashi/];
 
     is $row2->{data}{name}, 'tsucchi';

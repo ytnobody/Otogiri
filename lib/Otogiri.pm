@@ -65,7 +65,7 @@ You have to specify C<dsn>, C<dbuser>, and C<dbpass>, to connect to database.
 
     use JSON;
     inflate => sub {
-        my ($data, $tablename) = @_;
+        my ($data, $tablename, $db) = @_;
         if (defined $data->{json}) {
             $data->{json} = decode_json($data->{json});
         }
@@ -77,11 +77,13 @@ You may specify column inflation logic.
 
 Specified code is called internally when called select(), search_by_sql(), and single().
 
+C<$db> is Otogiri instance, you can use Otogiri's method in inflate logic.
+
 =head2 deflate (optional)
 
     use JSON;
     deflate => sub {
-        my ($data, $tablename) = @_;
+        my ($data, $tablename, $db) = @_;
         if (defined $data->{json}) {
             $data->{json} = encode_json($data->{json});
         }
@@ -92,6 +94,8 @@ Specified code is called internally when called select(), search_by_sql(), and s
 You may specify column deflation logic.
 
 Specified code is called internally when called insert(), update(), and delete().
+
+C<$db> is Otogiri instance, you can use Otogiri's method in deflate logic.
 
 =head1 METHODS
 

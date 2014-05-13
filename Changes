@@ -1,6 +1,7 @@
 Revision history for Perl extension Otogiri
 
 {{$NEXT}}
+    - add $self(Otogiri instance) to inflate/deflate 3rd parameter.
 
 0.09 2014-03-18T05:07:22Z
     - nothing is changed from 0.0.8(previous is unauthorized release)

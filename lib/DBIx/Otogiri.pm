@@ -29,14 +29,14 @@ sub new {
 sub _deflate_param {
     my ($self, $table, $param) = @_;
     if ($self->{deflate}) {
-        $param = $self->{deflate}->({%$param}, $table);
+        $param = $self->{deflate}->({%$param}, $table, $self);
     }
     return $param;
 }
 
 sub _inflate_rows {
     my ($self, $table, @rows) = @_;
-    @rows = $self->{inflate} ? map {$self->{inflate}->($_, $table)} grep {defined $_} @rows : @rows;
+    @rows = $self->{inflate} ? map {$self->{inflate}->($_, $table, $self)} grep {defined $_} @rows : @rows;
     wantarray ? @rows : $rows[0];
 }
 
