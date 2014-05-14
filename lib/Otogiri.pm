@@ -53,49 +53,9 @@ Otogiri - A lightweight medicine for using database
 
 Otogiri is a thing that like as ORM. A slogan is "Schema-less, Fat-less".
 
-=head1 ATTRIBUTE
+=head1 ATTRIBUTES
 
-=head2 connect_info (required)
-
-   connect_info => [$dsn, $dbuser, $dbpass],
-
-You have to specify C<dsn>, C<dbuser>, and C<dbpass>, to connect to database.
-
-=head2 inflate (optional)
-
-    use JSON;
-    inflate => sub {
-        my ($data, $tablename, $db) = @_;
-        if (defined $data->{json}) {
-            $data->{json} = decode_json($data->{json});
-        }
-        $data->{table} = $tablename;
-        $data;
-    },
-
-You may specify column inflation logic. 
-
-Specified code is called internally when called select(), search_by_sql(), and single().
-
-C<$db> is Otogiri instance, you can use Otogiri's method in inflate logic.
-
-=head2 deflate (optional)
-
-    use JSON;
-    deflate => sub {
-        my ($data, $tablename, $db) = @_;
-        if (defined $data->{json}) {
-            $data->{json} = encode_json($data->{json});
-        }
-        delete $data->{table};
-        $data;
-    },
-
-You may specify column deflation logic.
-
-Specified code is called internally when called insert(), update(), and delete().
-
-C<$db> is Otogiri instance, you can use Otogiri's method in deflate logic.
+Please see ATTRIBUTES section of L<DBIx::Otogiri> documentation.
 
 =head1 METHODS
 
