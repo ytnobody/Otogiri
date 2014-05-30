@@ -42,7 +42,6 @@ sub _inflate_rows {
 
 sub select {
     my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
     $self->search_by_sql($sql, \@binds, $table);
 }
@@ -56,16 +55,16 @@ sub search_by_sql {
 
 sub single {
     my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
     my $row = $self->dbh->select_row($sql, @binds);
     $self->{inflate} ? $self->_inflate_rows($table, $row) : $row;
 }
 
 sub insert {
-    my $self = shift;
-    if ($self->fast_insert(@_)) {
-        return $self->single(shift, @_);
+    my ($self, $table, $param, @opts) = @_;
+    if ($self->fast_insert($table, $param, @opts)) {
+        $param = $self->_deflate_param($table, $param);
+        return $self->single($table, $param, @opts);
     }
 }
 
