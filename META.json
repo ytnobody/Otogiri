@@ -52,6 +52,7 @@
       },
       "test" : {
          "requires" : {
+            "DBD::SQLite" : "0",
             "JSON" : "0",
             "Test::More" : "0.98",
             "Test::Time" : "0"
