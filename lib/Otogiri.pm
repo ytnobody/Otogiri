@@ -76,6 +76,8 @@ Please see ATTRIBUTE section.
 
 =item An insert() method is removed, and it was become a synonym of fast_insert() method.
 
+  If you want to use previous style insert() method, please try L<Otogiri::Plugin::InsertAndFetch> .
+
 =back
 
 =head1 LICENSE
