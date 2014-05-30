@@ -26,7 +26,11 @@ Otogiri - A lightweight medicine for using database
     use Otogiri;
     my $db = Otogiri->new(connect_info => ['dbi:SQLite:...', '', '']);
     
-    my $row = $db->insert(book => {title => 'mybook1', author => 'me', ...});
+    $db->insert(book => {title => 'mybook1', author => 'me', ...});
+
+    my $book_id = $db->last_insert_id;
+    my $row = $db->single(book => {id => $book_id});
+
     print 'Title: '. $row->{title}. "\n";
     
     my @rows = $db->select(book => {price => {'>=' => 500}});
@@ -37,9 +41,6 @@ Otogiri - A lightweight medicine for using database
     $db->update(book => [author => 'oreore'], {author => 'me'});
     
     $db->delete(book => {author => 'me'});
-    
-    ### insert without row-data in response
-    $db->fast_insert(book => {title => 'someone', ...});
     
     ### using transaction
     do {
@@ -66,6 +67,16 @@ Please see ATTRIBUTES section of L<DBIx::Otogiri> documentation.
 Instantiate and connect to db. Then, it returns L<DBIx::Otogiri> object.
 
 Please see ATTRIBUTE section.
+
+=head1 INFORMATION ABOUT INCOMPATIBILITY
+
+=head2 version 0.11
+
+=oevr 4
+
+=item An insert() method is removed, and it was become a synonym of fast_insert() method.
+
+=back
 
 =head1 LICENSE
 

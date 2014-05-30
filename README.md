@@ -8,7 +8,11 @@ Otogiri - A lightweight medicine for using database
     my $db = Otogiri->new(connect_info => ['dbi:SQLite:...', '', '']);
     
 
-    my $row = $db->insert(book => {title => 'mybook1', author => 'me', ...});
+    $db->insert(book => {title => 'mybook1', author => 'me', ...});
+
+    my $book_id = $db->last_insert_id;
+    my $row = $db->single(book => {id => $book_id});
+
     print 'Title: '. $row->{title}. "\n";
     
 
@@ -22,10 +26,6 @@ Otogiri - A lightweight medicine for using database
     
 
     $db->delete(book => {author => 'me'});
-    
-
-    ### insert without row-data in response
-    $db->fast_insert(book => {title => 'someone', ...});
     
 
     ### using transaction
@@ -53,6 +53,12 @@ Please see ATTRIBUTES section of [DBIx::Otogiri](http://search.cpan.org/perldoc?
 Instantiate and connect to db. Then, it returns [DBIx::Otogiri](http://search.cpan.org/perldoc?DBIx::Otogiri) object.
 
 Please see ATTRIBUTE section.
+
+# INFORMATION ABOUT INCOMPATIBILITY
+
+## version 0.11
+
+- An insert() method is removed, and it was become a synonym of fast\_insert() method.
 
 # LICENSE
 
