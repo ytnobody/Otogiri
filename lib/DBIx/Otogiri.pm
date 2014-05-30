@@ -46,6 +46,8 @@ sub select {
     $self->search_by_sql($sql, \@binds, $table);
 }
 
+*search = *select;
+
 sub search_by_sql {
     my ($self, $sql, $binds_aref, $table) = @_;
     my @binds = @{$binds_aref || []};
@@ -60,20 +62,14 @@ sub single {
     $self->{inflate} ? $self->_inflate_rows($table, $row) : $row;
 }
 
-sub insert {
-    my ($self, $table, $param, @opts) = @_;
-    if ($self->fast_insert($table, $param, @opts)) {
-        $param = $self->_deflate_param($table, $param);
-        return $self->single($table, $param, @opts);
-    }
-}
-
 sub fast_insert {
     my ($self, $table, $param, @opts) = @_;
     $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->insert($table, $param, @opts);
     $self->dbh->query($sql, @binds);
 }
+
+*insert = *fast_insert;
 
 sub delete {
     my ($self, $table, $param, @opts) = @_;

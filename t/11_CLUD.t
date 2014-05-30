@@ -30,13 +30,17 @@ subtest insert => sub {
         created_at => $time,
     };
     
-    my $member = $db->insert(member => $param);
-    
+    $db->insert(member => $param);
+
+    my $member_id = $db->last_insert_id;
+    is $member_id, 1;
+
+    my $member = $db->single(member => {id => $member_id});
     isa_ok $member, 'HASH';
+
     for my $key (keys %$param) {
         is $member->{$key}, $param->{$key}, "$key is ". $param->{$key};
     }
-    is $member->{id}, $db->last_insert_id();
 };
 
 subtest transaction_and_update => sub {

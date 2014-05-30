@@ -57,13 +57,14 @@ CREATE TABLE free_data (
 EOF
 
     $db->do($sql);
-    my $row = $db->insert(free_data => {
+    $db->insert(free_data => {
         data => {
             name     => 'ytnobody', 
             age      => 32,
             favolite => [qw/Soba Zohni Akadashi/],
         },
     });
+    my $row = $db->single(free_data => {id => $db->last_insert_id});
     
     is $row->{data}{name}, 'ytnobody';
     is $row->{data}{age}, 32;
@@ -99,7 +100,8 @@ EOF
         created_at => time,
     };
     
-    my $member = $db->insert(member => $param);
+    $db->insert(member => $param);
+    my $member = $db->single(member => {id => $db->last_insert_id});
 
     isa_ok $member, 'Otogiri::Test::Row';
     is $member->name, 'ytnobody';
