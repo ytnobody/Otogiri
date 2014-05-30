@@ -60,6 +60,8 @@ Please see ATTRIBUTE section.
 
 - An insert() method is removed, and it was become a synonym of fast\_insert() method.
 
+        If you want to use previous style insert() method, please try L<Otogiri::Plugin::InsertAndFetch> .
+
 # LICENSE
 
 Copyright (C) ytnobody.

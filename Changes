@@ -2,6 +2,13 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.11 2014-05-30T10:10:49Z
+    - INCOMPATIBLE CHANGE [ytnobody]
+      Remove insert() method and it was became a synonym for fast_insert() method.
+      Previous insert() method will be spinout as Otogiri::Plugin::InsertAndFetch.
+    - Add a synonym fetch() for single() method.
+    - Add a synonym search() for select() method.
+
 0.10 2014-05-13T12:57:51Z
     - add $self(Otogiri instance) to inflate/deflate 3rd parameter.
 

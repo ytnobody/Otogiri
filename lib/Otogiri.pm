@@ -72,7 +72,7 @@ Please see ATTRIBUTE section.
 
 =head2 version 0.11
 
-=oevr 4
+=over 4
 
 =item An insert() method is removed, and it was become a synonym of fast_insert() method.
 
