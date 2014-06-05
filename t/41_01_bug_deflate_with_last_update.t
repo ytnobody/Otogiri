@@ -103,6 +103,10 @@ EOF
     is $row2->{data}{table_name_in_deflate}, 'free_data2';
     is $row2->{created_at} - $now, 10;
     is_deeply $row2->{data}{favolite}, [qw/Ramen Sushi/];
+
+    $db->delete('free_data2', {id => 1});
+    my $deleted_row = $db->single('free_data2', {id => 1});
+    is $deleted_row, undef;
 };
 
 done_testing;

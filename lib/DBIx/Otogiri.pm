@@ -75,7 +75,6 @@ sub fast_insert {
 
 sub delete {
     my ($self, $table, $param, @opts) = @_;
-    $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->delete($table, $param, @opts);
     $self->dbh->query($sql, @binds);
 }
