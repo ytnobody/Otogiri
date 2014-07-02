@@ -38,6 +38,12 @@ Otogiri - A lightweight medicine for using database
         printf "Title: %s \nPrice: %s yen\n", $r->{title}, $r->{price};
     }
     
+    # or using iterator
+    my $iter = $db->select(book => {price => {'>=' => 500}});
+    while (my $row = $iter->next) {
+        printf "Title: %s \nPrice: %s yen\n", $row->{title}, $row->{price};
+    }
+    
     $db->update(book => [author => 'oreore'], {author => 'me'});
     
     $db->delete(book => {author => 'me'});

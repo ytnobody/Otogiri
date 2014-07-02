@@ -11,6 +11,7 @@ use Class::Accessor::Lite (
 
 use SQL::Maker;
 use DBIx::Sunny;
+use DBIx::Otogiri::Iterator;
 
 sub new {
     my ($class, %opts) = @_;
@@ -50,9 +51,17 @@ sub select {
 
 sub search_by_sql {
     my ($self, $sql, $binds_aref, $table) = @_;
+
+    return DBIx::Otogiri::Iterator->new(
+        db    => $self,
+        sql   => $sql, 
+        binds => $binds_aref,
+        table => $table,
+    ) unless wantarray;
+
     my @binds = @{$binds_aref || []};
     my $rtn = $self->dbh->select_all($sql, @binds);
-    my @rows = $rtn ? $self->_inflate_rows($table, @$rtn) : ();
+    $rtn ? $self->_inflate_rows($table, @$rtn) : ();
 }
 
 sub single {
@@ -212,9 +221,19 @@ Insert a data simply.
 
 =head2 select / search
 
+    ### receive rows of result in array
     my @rows = $db->search($table_name => $conditions_in_hashref [,@options]);
+    
+    ### or we can receive result as iterator object
+    my $iter = $db->search($table_name => $conditions_in_hashref [,@options]);
+    
+    while (my $row = $iter->next) {
+        ... any logic you want ...
+    }
+    
+    printf "rows = %s\n", $iter->fetched_count;
 
-Select from specified table. Then, returns matched rows as array.
+Select from specified table. When you receive result by array, it returns matched rows. Or not, it returns a result as L<DBIx::Otogiri::Iterator> object.
 
 =head2 single / fetch
 
@@ -275,6 +294,8 @@ ytnobody E<lt>ytnobody@gmail.comE<gt>
 L<DBIx::Sunny>
 
 L<SQL::Maker>
+
+L<DBIx::Otogiri::Iterator>
 
 =cut
 

@@ -167,6 +167,13 @@ EOF
     is $row2->{data}{table_name_in_inflate}, 'free_data2';
     is $row2->{data}{table_name_in_deflate}, 'free_data2';
     is_deeply $row2->{data}{favolite}, [qw/Ramen Sushi/];
+
+    my $iter = $db->select('free_data2');
+    while (my $iter_row = $iter->next) {
+        my $index = $iter->fetched_count - 1;
+        is_deeply($iter_row, $rows[$index]);
+    }
+    is $iter->fetched_count, 2;
 };
 
 done_testing;

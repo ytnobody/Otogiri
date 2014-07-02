@@ -95,6 +95,21 @@ subtest select => sub {
     is $rows[0]->{sex}, 'female';
 };
 
+subtest iterator => sub {
+    my @rows = $db->select(member => {sex => 'male'});
+    my $iter = $db->select(member => {sex => 'male'});
+
+    isa_ok $iter, 'DBIx::Otogiri::Iterator';
+    can_ok $iter, qw|next fetched_count|;
+
+    while (my $row = $iter->next) {
+        isa_ok $row, 'HASH';
+        my $index = $iter->fetched_count - 1;
+        is_deeply($row, $rows[$index]);
+    }
+    is $iter->fetched_count, 2;
+};
+
 subtest delete => sub {
     my $tonkichi = $db->single(member => {name => 'tonkichi'});
     $db->delete(member => {name => 'tonkichi'});
