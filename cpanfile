@@ -1,6 +1,6 @@
 requires 'perl', '5.008001';
 requires 'Class::Accessor::Lite';
-requires 'SQL::Maker';
+requires 'SQL::Maker', '1.16';
 requires 'DBIx::Sunny';
 
 on 'test' => sub {
