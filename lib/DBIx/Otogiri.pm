@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Class::Accessor::Lite (
-    ro => [qw/connect_info/],
+    ro => [qw/connect_info strict/],
     rw => [qw/dbh maker/],
     new => 0,
 );
@@ -22,8 +22,9 @@ sub new {
       $self->{dsn}{attributes},
       $self->{dsn}{driver_dsn}
     ) = DBI->parse_dsn($self->{connect_info}[0]);
+    my $strict = defined $self->strict ? $self->strict : 1;
     $self->{dbh}   = DBIx::Sunny->connect(@{$self->{connect_info}});
-    $self->{maker} = SQL::Maker->new(driver => $self->{dsn}{driver}, strict => 1);
+    $self->{maker} = SQL::Maker->new(driver => $self->{dsn}{driver}, strict => $strict);
     return $self;
 }
 

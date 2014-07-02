@@ -5,7 +5,18 @@ use warnings;
 
 our $VERSION = "0.12";
 
+use parent 'Exporter';
+use SQL::QueryMaker;
 use DBIx::Otogiri;
+
+our @EXPORT = map {"sql_$_"} qw/
+    eq like lt gt le ge
+    is_null is_not_null
+    between not_between
+    in not_in
+    and or not
+    op raw
+/;
 
 sub new {
     my ($class, %opts) = @_;

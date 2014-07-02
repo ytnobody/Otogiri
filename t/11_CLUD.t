@@ -110,6 +110,15 @@ subtest iterator => sub {
     is $iter->fetched_count, 2;
 };
 
+subtest range_search => sub {
+    my @rows = $db->search(member => sql_and([
+        sql_ge(age => 25), 
+        sql_eq(sex => 'male'),
+    ]));
+    is scalar(@rows), 1;
+    is $rows[0]->{name}, 'ytnobody';
+};
+
 subtest delete => sub {
     my $tonkichi = $db->single(member => {name => 'tonkichi'});
     $db->delete(member => {name => 'tonkichi'});
