@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Class::Accessor::Lite (
-    ro => [qw/connect_info/],
+    ro => [qw/connect_info strict/],
     rw => [qw/dbh maker/],
     new => 0,
 );
@@ -22,8 +22,9 @@ sub new {
       $self->{dsn}{attributes},
       $self->{dsn}{driver_dsn}
     ) = DBI->parse_dsn($self->{connect_info}[0]);
+    my $strict = defined $self->strict ? $self->strict : 1;
     $self->{dbh}   = DBIx::Sunny->connect(@{$self->{connect_info}});
-    $self->{maker} = SQL::Maker->new(driver => $self->{dsn}{driver});
+    $self->{maker} = SQL::Maker->new(driver => $self->{dsn}{driver}, strict => $strict);
     return $self;
 }
 
@@ -164,6 +165,12 @@ DBIx::Otogiri is core feature class of Otogiri.
    connect_info => [$dsn, $dbuser, $dbpass],
 
 You have to specify C<dsn>, C<dbuser>, and C<dbpass>, to connect to database.
+
+=head2 strict (optional, default is 1)
+
+In strict mode, all the expressions must be declared by using blessed references that export as_sql and bind methods like SQL::QueryMaker.
+
+Please see METHODS section of L<SQL::Maker>'s documentation.
 
 =head2 inflate (optional)
 

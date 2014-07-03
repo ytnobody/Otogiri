@@ -48,5 +48,12 @@ subtest broken_query => sub {
     like $@, qr|$filename|, 'check filename that contains into comment in SQL';
 };
 
+subtest sqlmaker_injection_proof => sub {
+    dies_ok { 
+        $db->search('member', { name => { ';' => 'DROP TABLE member' } });
+    } 'cannot pass in an unblessed ref as an argument in strict mode';
+    
+};
+
 done_testing;
 

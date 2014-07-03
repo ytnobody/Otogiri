@@ -5,7 +5,18 @@ use warnings;
 
 our $VERSION = "0.12";
 
+use parent 'Exporter';
+use SQL::QueryMaker;
 use DBIx::Otogiri;
+
+our @EXPORT = map {"sql_$_"} qw/
+    eq like lt gt le ge
+    is_null is_not_null
+    between not_between
+    in not_in
+    and or not
+    op raw
+/;
 
 sub new {
     my ($class, %opts) = @_;
@@ -33,7 +44,11 @@ Otogiri - A lightweight medicine for using database
 
     print 'Title: '. $row->{title}. "\n";
     
+    my @rows = $db->select(book => sql_ge(price => 500));
+    
+    ### or non-strict mode
     my @rows = $db->select(book => {price => {'>=' => 500}});
+
     for my $r (@rows) {
         printf "Title: %s \nPrice: %s yen\n", $r->{title}, $r->{price};
     }
@@ -72,7 +87,11 @@ Please see ATTRIBUTES section of L<DBIx::Otogiri> documentation.
 
 Instantiate and connect to db. Then, it returns L<DBIx::Otogiri> object.
 
-Please see ATTRIBUTE section.
+=head1 EXPORT FUNCTIONS
+
+Otogiri exports each SQL::QueryMaker::sql_* functions. (ex. sql_ge(), sql_like() and more...)
+
+For more information, please see FUNCTIONS section of L<SQL::QueryMaker>'s documentation.
 
 =head1 INFORMATION ABOUT INCOMPATIBILITY
 
@@ -104,6 +123,8 @@ L<DBIx::Otogiri>
 L<DBIx::Sunny>
 
 L<SQL::Maker>
+
+L<SQL::QueryMaker>
 
 =cut
 
