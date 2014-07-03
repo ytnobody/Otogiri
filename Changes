@@ -2,6 +2,11 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.13 2014-07-03T12:39:07Z
+    - feature: Add DBIx::Otogiri::Iterator
+    - security fix: add strict mode. 
+      IF YOU WANT TO USE TRADDITIONAL INTERFACE, PLEASE SPECIFY strict => 0 WHEN CALL Otogiri->new(...);
+
 0.12 2014-06-05T08:29:05Z
     - Stop deflation of parameters when calling delete() method.
 
