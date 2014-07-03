@@ -8,6 +8,7 @@ my $dbfile  = ':memory:';
 my $db = Otogiri->new( connect_info => ["dbi:SQLite:dbname=$dbfile", '', ''] );
 isa_ok $db, 'DBIx::Otogiri';
 can_ok $db, qw/insert fast_insert select single search_by_sql delete update txn_scope dbh maker do/;
+is $db->maker->strict, 1;
 
 my $sql = <<'EOF';
 CREATE TABLE member (
@@ -115,6 +116,35 @@ subtest range_search => sub {
         sql_ge(age => 25), 
         sql_eq(sex => 'male'),
     ]));
+    is scalar(@rows), 1;
+    is $rows[0]->{name}, 'ytnobody';
+};
+
+subtest no_strict_range_search => sub {
+    my $db_nost = Otogiri->new( connect_info => ["dbi:SQLite:dbname=$dbfile", '', ''], strict => 0);
+    is $db_nost->maker->strict, 0;
+
+    { ### create dummy data for testing ...
+        $db_nost->do($sql);
+        my $param = {
+            name       => 'ytnobody', 
+            age        => 30,
+            sex        => 'male',
+            created_at => time,
+        };
+        $db_nost->insert(member => $param);
+        do {
+            my $txn = $db->txn_scope;
+            $db_nost->insert(member => {name => 'oreore', sex => 'male', created_at => time});
+            $db_nost->update(member => [name => 'tonkichi', updated_at => time], {name => 'oreore'});
+            $txn->commit;
+        };
+    }
+
+    my @rows = $db_nost->search(member => {
+        age => { '>=' => 25 }, 
+        sex => 'male',
+    });
     is scalar(@rows), 1;
     is $rows[0]->{name}, 'ytnobody';
 };
