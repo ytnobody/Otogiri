@@ -166,6 +166,12 @@ DBIx::Otogiri is core feature class of Otogiri.
 
 You have to specify C<dsn>, C<dbuser>, and C<dbpass>, to connect to database.
 
+=head2 strict (optional, default is 1)
+
+In strict mode, all the expressions must be declared by using blessed references that export as_sql and bind methods like SQL::QueryMaker.
+
+Please see METHODS section of L<SQL::Maker>'s documentation.
+
 =head2 inflate (optional)
 
     use JSON;
