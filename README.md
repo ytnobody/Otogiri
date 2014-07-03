@@ -16,7 +16,12 @@ Otogiri - A lightweight medicine for using database
     print 'Title: '. $row->{title}. "\n";
     
 
+    my @rows = $db->select(book => sql_ge(price => 500));
+    
+
+    ### or non-strict mode
     my @rows = $db->select(book => {price => {'>=' => 500}});
+
     for my $r (@rows) {
         printf "Title: %s \nPrice: %s yen\n", $r->{title}, $r->{price};
     }
@@ -59,7 +64,11 @@ Please see ATTRIBUTES section of [DBIx::Otogiri](http://search.cpan.org/perldoc?
 
 Instantiate and connect to db. Then, it returns [DBIx::Otogiri](http://search.cpan.org/perldoc?DBIx::Otogiri) object.
 
-Please see ATTRIBUTE section.
+# EXPORT FUNCTIONS
+
+Otogiri exports each SQL::QueryMaker::sql\_\* functions. (ex. sql\_ge(), sql\_like() and more...)
+
+For more information, please see FUNCTIONS section of [SQL::QueryMaker](http://search.cpan.org/perldoc?SQL::QueryMaker)'s documentation.
 
 # INFORMATION ABOUT INCOMPATIBILITY
 
@@ -87,3 +96,5 @@ ytnobody <ytnobody@gmail.com>
 [DBIx::Sunny](http://search.cpan.org/perldoc?DBIx::Sunny)
 
 [SQL::Maker](http://search.cpan.org/perldoc?SQL::Maker)
+
+[SQL::QueryMaker](http://search.cpan.org/perldoc?SQL::QueryMaker)

@@ -47,6 +47,7 @@
             "Class::Accessor::Lite" : "0",
             "DBIx::Sunny" : "0",
             "SQL::Maker" : "1.16",
+            "SQL::QueryMaker" : "0.02",
             "perl" : "5.008005"
          }
       },
