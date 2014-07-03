@@ -7,7 +7,6 @@ Otogiri - A lightweight medicine for using database
     use Otogiri;
     my $db = Otogiri->new(connect_info => ['dbi:SQLite:...', '', '']);
     
-
     $db->insert(book => {title => 'mybook1', author => 'me', ...});
 
     my $book_id = $db->last_insert_id;
@@ -15,10 +14,8 @@ Otogiri - A lightweight medicine for using database
 
     print 'Title: '. $row->{title}. "\n";
     
-
     my @rows = $db->select(book => sql_ge(price => 500));
     
-
     ### or non-strict mode
     my @rows = $db->select(book => {price => {'>=' => 500}});
 
@@ -26,20 +23,16 @@ Otogiri - A lightweight medicine for using database
         printf "Title: %s \nPrice: %s yen\n", $r->{title}, $r->{price};
     }
     
-
     # or using iterator
     my $iter = $db->select(book => {price => {'>=' => 500}});
     while (my $row = $iter->next) {
         printf "Title: %s \nPrice: %s yen\n", $row->{title}, $row->{price};
     }
     
-
     $db->update(book => [author => 'oreore'], {author => 'me'});
     
-
     $db->delete(book => {author => 'me'});
     
-
     ### using transaction
     do {
         my $txn = $db->txn_scope;
@@ -54,7 +47,7 @@ Otogiri is a thing that like as ORM. A slogan is "Schema-less, Fat-less".
 
 # ATTRIBUTES
 
-Please see ATTRIBUTES section of [DBIx::Otogiri](http://search.cpan.org/perldoc?DBIx::Otogiri) documentation.
+Please see ATTRIBUTES section of [DBIx::Otogiri](https://metacpan.org/pod/DBIx::Otogiri) documentation.
 
 # METHODS
 
@@ -62,13 +55,13 @@ Please see ATTRIBUTES section of [DBIx::Otogiri](http://search.cpan.org/perldoc?
 
     my $db = Otogiri->new( connect_info => [$dsn, $dbuser, $dbpass] );
 
-Instantiate and connect to db. Then, it returns [DBIx::Otogiri](http://search.cpan.org/perldoc?DBIx::Otogiri) object.
+Instantiate and connect to db. Then, it returns [DBIx::Otogiri](https://metacpan.org/pod/DBIx::Otogiri) object.
 
 # EXPORT FUNCTIONS
 
 Otogiri exports each SQL::QueryMaker::sql\_\* functions. (ex. sql\_ge(), sql\_like() and more...)
 
-For more information, please see FUNCTIONS section of [SQL::QueryMaker](http://search.cpan.org/perldoc?SQL::QueryMaker)'s documentation.
+For more information, please see FUNCTIONS section of [SQL::QueryMaker](https://metacpan.org/pod/SQL::QueryMaker)'s documentation.
 
 # INFORMATION ABOUT INCOMPATIBILITY
 
@@ -91,10 +84,10 @@ ytnobody <ytnobody@gmail.com>
 
 # SEE ALSO
 
-[DBIx::Otogiri](http://search.cpan.org/perldoc?DBIx::Otogiri)
+[DBIx::Otogiri](https://metacpan.org/pod/DBIx::Otogiri)
 
-[DBIx::Sunny](http://search.cpan.org/perldoc?DBIx::Sunny)
+[DBIx::Sunny](https://metacpan.org/pod/DBIx::Sunny)
 
-[SQL::Maker](http://search.cpan.org/perldoc?SQL::Maker)
+[SQL::Maker](https://metacpan.org/pod/SQL::Maker)
 
-[SQL::QueryMaker](http://search.cpan.org/perldoc?SQL::QueryMaker)
+[SQL::QueryMaker](https://metacpan.org/pod/SQL::QueryMaker)
