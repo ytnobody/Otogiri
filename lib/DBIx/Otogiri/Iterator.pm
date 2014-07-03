@@ -18,7 +18,11 @@ sub new {
 sub next {
     my $self = shift;
     my $row = $self->sth->fetchrow_hashref;
-    return unless $row;
+    unless ($row) {
+        $self->sth->finish;
+        $self->{sth} = undef;
+        return;
+    }
     $self->{fetched_count}++;
     ($row) = $self->db->_inflate_rows($self->table, $row);
     return $row;
