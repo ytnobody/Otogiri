@@ -5,12 +5,13 @@ use warnings;
 
 use Class::Accessor::Lite (
     ro => [qw/connect_info strict/],
-    rw => [qw/dbh maker/],
+    rw => [qw/connector maker/],
     new => 0,
 );
 
 use SQL::Maker;
 use DBIx::Sunny;
+use DBIx::Connector;
 use DBIx::Otogiri::Iterator;
 
 sub new {
@@ -23,9 +24,19 @@ sub new {
       $self->{dsn}{driver_dsn}
     ) = DBI->parse_dsn($self->{connect_info}[0]);
     my $strict = defined $self->strict ? $self->strict : 1;
-    $self->{dbh}   = DBIx::Sunny->connect(@{$self->{connect_info}});
+
+    my ($dsn, $user, $pass, $attr) = @{$self->{connect_info}};
+    $attr ||= {};
+    $attr->{RootClass} = 'DBIx::Sunny';
+
+    $self->{connector} = DBIx::Connector->new($dsn, $user, $pass, $attr);
     $self->{maker} = SQL::Maker->new(driver => $self->{dsn}{driver}, strict => $strict);
     return $self;
+}
+
+sub dbh {
+    my $self = shift;
+    $self->{connector}->dbh;
 }
 
 sub _deflate_param {
@@ -61,14 +72,18 @@ sub search_by_sql {
     ) unless wantarray;
 
     my @binds = @{$binds_aref || []};
-    my $rtn = $self->dbh->select_all($sql, @binds);
+    my $rtn = $self->connector->run(fixup => sub {
+        $_->select_all($sql, @binds);
+    });
     $rtn ? $self->_inflate_rows($table, @$rtn) : ();
 }
 
 sub single {
     my ($self, $table, $param, @opts) = @_;
     my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
-    my $row = $self->dbh->select_row($sql, @binds);
+    my $row = $self->connector->run(fixup => sub {
+        $_->select_row($sql, @binds);
+    });
     $self->{inflate} ? $self->_inflate_rows($table, $row) : $row;
 }
 
@@ -78,7 +93,9 @@ sub fast_insert {
     my ($self, $table, $param, @opts) = @_;
     $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->insert($table, $param, @opts);
-    $self->dbh->query($sql, @binds);
+    $self->connector->run(fixup => sub {
+        $_->query($sql, @binds);
+    });
 }
 
 *insert = *fast_insert;
@@ -86,24 +103,32 @@ sub fast_insert {
 sub delete {
     my ($self, $table, $param, @opts) = @_;
     my ($sql, @binds) = $self->maker->delete($table, $param, @opts);
-    $self->dbh->query($sql, @binds);
+    $self->connector->run(fixup => sub {
+        $_->query($sql, @binds);
+    });
 }
 
 sub update {
     my ($self, $table, $param, @opts) = @_;
     $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->update($table, $param, @opts);
-    $self->dbh->query($sql, @binds);
+    $self->connector->run(fixup => sub {
+        $_->query($sql, @binds);
+    });
 }
 
 sub do {
-    my $self = shift;
-    $self->dbh->query(@_);
+    my ($self, @args) = @_;
+    $self->connector->run(fixup => sub {
+        $_->query(@args);
+    });
 }
 
 sub txn_scope {
     my $self = shift;
-    $self->dbh->txn_scope;
+    $self->connector->run(fixup => sub {
+        $_->txn_scope;
+    });
 }
 
 sub last_insert_id {
@@ -113,7 +138,9 @@ sub last_insert_id {
         my @rows = $self->search_by_sql('SELECT LASTVAL() AS lastval');
         return $rows[0]->{lastval};
     }
-    return $self->dbh->last_insert_id(@_);
+    return $self->connector->run(fixup => sub {
+        $_->last_insert_id(@_);
+    });
 }
 
 1;

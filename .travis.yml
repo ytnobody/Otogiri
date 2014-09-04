@@ -6,10 +6,12 @@ perl:
   - 5.18
 
 before_script:
+  - sudo apt-get install mysql-server
   - cpanm --quiet --notest --skip-satisfied Devel::Cover::Report::Coveralls
   - cover -delete 
 
 script:
+  - cpanm --quiet Test::mysqld
   - perl Build.PL 
   - ./Build build 
   - HARNESS_PERL_SWITCHES="-MDevel::Cover=+ignore,inc" PERL5LIB="lib" prove t/
