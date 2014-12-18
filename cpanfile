@@ -9,4 +9,9 @@ on 'test' => sub {
     requires 'Test::Time', '0';
     requires 'DBD::SQLite', '0';
     requires 'JSON', '0';
+    requires 'Test::Requires';
+};
+
+on 'develop' => sub {
+    requires 'Test::PostgreSQL';
 };
