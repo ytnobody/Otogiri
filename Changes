@@ -2,6 +2,9 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+    - using Sunny's last_insert_id(not using LASTVAL()) when $table_name is specified in PostgreSQL
+
+
 0.13 2014-07-03T12:39:07Z
     - feature: Add DBIx::Otogiri::Iterator
     - security fix: add strict mode. 
