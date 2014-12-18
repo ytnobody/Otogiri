@@ -109,11 +109,11 @@ sub txn_scope {
 sub last_insert_id {
     my ($self, $catalog, $schema, $table, $field, $attr_href) = @_;
     my $driver_name = $self->{dsn}{driver};
-    if ($driver_name eq 'Pg' && !exists $attr_href->{sequence}) {
+    if ($driver_name eq 'Pg' && !defined $table && !exists $attr_href->{sequence}) {
         my @rows = $self->search_by_sql('SELECT LASTVAL() AS lastval');
         return $rows[0]->{lastval};
     }
-    return $self->dbh->last_insert_id(@_);
+    return $self->dbh->last_insert_id($catalog, $schema, $table, $field, $attr_href);
 }
 
 1;
