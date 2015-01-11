@@ -5,7 +5,7 @@ use warnings;
 
 use Class::Accessor::Lite (
     ro => [qw/connect_info strict/],
-    rw => [qw/dbh maker/],
+    rw => [qw/maker owner_pid/],
     new => 0,
 );
 
@@ -25,6 +25,7 @@ sub new {
     my $strict = defined $self->strict ? $self->strict : 1;
     $self->{dbh}   = DBIx::Sunny->connect(@{$self->{connect_info}});
     $self->{maker} = SQL::Maker->new(driver => $self->{dsn}{driver}, strict => $strict);
+    $self->owner_pid($$);
     return $self;
 }
 
@@ -115,6 +116,45 @@ sub last_insert_id {
     }
     return $self->dbh->last_insert_id($catalog, $schema, $table, $field, $attr_href);
 }
+
+sub reconnect {
+    my ($self) = @_;
+
+    $self->_in_transaction_check();
+
+    my $dbh = $self->{dbh};
+    $self->{dbh}->disconnect();
+    $self->owner_pid(undef);
+
+    $self->{dbh} = $dbh->clone();
+    $self->owner_pid($$);
+}
+
+sub dbh {
+    my ($self) = @_;
+    my $dbh = $self->{dbh};
+
+    if ( !defined $self->owner_pid || $self->owner_pid != $$ ) {
+        $self->reconnect;
+    }
+    if ( !$dbh->FETCH('Active') || !$dbh->ping ) {
+        $self->reconnect;
+    }
+    return $self->{dbh};
+}
+
+sub _in_transaction_check {
+    my ($self) = @_;
+
+    return if ( !defined $self->{dbh}->{private_txt_manager} );
+
+    if ( my $info = $self->{dbh}->{private_txt_manager}->in_transaction() ) {
+        my $caller = $info->{caller};
+        my $pid    = $info->{pid};
+        Carp::confess("Detected transaction during a connect operation (last known transaction at $caller->[1] line $caller->[2], pid $pid). Refusing to proceed at");
+    }
+}
+
 
 1;
 __END__

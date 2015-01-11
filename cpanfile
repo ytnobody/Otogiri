@@ -10,6 +10,8 @@ on 'test' => sub {
     requires 'DBD::SQLite', '0';
     requires 'JSON', '0';
     requires 'Test::Requires';
+    requires 'File::Temp';
+    requires 'Mock::Quick'
 };
 
 on 'develop' => sub {
