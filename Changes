@@ -2,7 +2,9 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
-    - automatically reconnect when connection is lost
+0.15 2015-01-11T04:55:43Z
+
+    - automatically reconnect when connection is lost [tsucchi]
 
 0.14 2014-12-18T08:36:13Z
 

@@ -3,7 +3,6 @@ use warnings;
 use Test::More;
 use Mock::Quick;
 use Otogiri;
-#use DBIx::QueryLog;
 use File::Temp qw(tempfile);
 
 my ($fh, $dbfile)  = tempfile('db_XXXXX', UNLINK => 1, EXLOCK => 0);
