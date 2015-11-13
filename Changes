@@ -2,6 +2,11 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.16 2015-11-13T07:17:24Z
+
+    - add disconnect() [tsucchi]
+    - call disconnect() when reconnect() was called [tsucchi]
+
 0.15 2015-01-11T04:55:43Z
 
     - automatically reconnect when connection is lost [tsucchi]
