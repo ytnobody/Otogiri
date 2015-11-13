@@ -26,14 +26,14 @@ my $person_id = $db->last_insert_id();
 
 
 subtest 'reconnect', sub {
-    $db->dbh->disconnect();
+    $db->disconnect();
     $db->reconnect();
     my $row = $db->single('person', { id => $person_id });
     ok( defined $row );
 };
 
 subtest 'auto reconnect', sub {
-    $db->dbh->disconnect();
+    $db->disconnect();
     #$db->reconnect();
     my $row = $db->single('person', { id => $person_id });
     ok( defined $row );

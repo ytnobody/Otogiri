@@ -122,12 +122,17 @@ sub reconnect {
 
     $self->_in_transaction_check();
 
-    my $dbh = $self->{dbh};
-    $self->{dbh}->disconnect();
-    $self->owner_pid(undef);
+    $self->disconnect();
 
+    my $dbh = $self->{dbh};
     $self->{dbh} = $dbh->clone();
     $self->owner_pid($$);
+}
+
+sub disconnect {
+    my ($self) = @_;
+    $self->{dbh}->disconnect();
+    $self->owner_pid(undef);
 }
 
 sub dbh {
@@ -323,6 +328,14 @@ returns DBIx::TransactionManager::ScopeGuard's instance. See L<DBIx::Transaction
     my $id = $db->last_insert_id([@args]);
 
 returns last_insert_id. (mysql_insertid in MySQL or last_insert_rowid in SQLite)
+
+=head2 disconnect
+
+disconnect database.
+
+=head2 reconnect
+
+reconnect database.
 
 
 =head1 LICENSE
