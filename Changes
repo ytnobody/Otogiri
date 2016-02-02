@@ -2,6 +2,12 @@ Revision history for Perl extension Otogiri
 
 {{$NEXT}}
 
+0.17 2016-02-02T05:57:36Z
+
+    - INCOMPATIBLE CHANGE [tsucchi]
+      Change a behavior of insert() / fast_insert() as returns a last_insert_id.
+    - reformat a documentation [ytnobody]
+
 0.16 2015-11-13T07:17:24Z
 
     - add disconnect() [tsucchi]
