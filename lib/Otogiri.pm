@@ -97,13 +97,9 @@ For more information, please see FUNCTIONS section of L<SQL::QueryMaker>'s docum
 
 =head2 version 0.11
 
-=over 4
+An insert() method is removed, and it was become a synonym of fast_insert() method.
 
-=item An insert() method is removed, and it was become a synonym of fast_insert() method.
-
-  If you want to use previous style insert() method, please try L<Otogiri::Plugin::InsertAndFetch> .
-
-=back
+If you want to use previous style insert() method, please try L<Otogiri::Plugin::InsertAndFetch> .
 
 =head1 LICENSE
 

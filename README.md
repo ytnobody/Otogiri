@@ -67,9 +67,9 @@ For more information, please see FUNCTIONS section of [SQL::QueryMaker](https://
 
 ## version 0.11
 
-- An insert() method is removed, and it was become a synonym of fast\_insert() method.
+An insert() method is removed, and it was become a synonym of fast\_insert() method.
 
-        If you want to use previous style insert() method, please try L<Otogiri::Plugin::InsertAndFetch> .
+If you want to use previous style insert() method, please try [Otogiri::Plugin::InsertAndFetch](https://metacpan.org/pod/Otogiri::Plugin::InsertAndFetch) .
 
 # LICENSE
 
