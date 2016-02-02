@@ -80,6 +80,11 @@ sub fast_insert {
     $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->insert($table, $param, @opts);
     $self->dbh->query($sql, @binds);
+
+    if ( defined wantarray() ) {
+        return $self->last_insert_id;
+    }
+    return;
 }
 
 *insert = *fast_insert;
@@ -265,7 +270,7 @@ Please see ATTRIBUTE section.
 
 =head2 insert / fast_insert
 
-    my $is_success = $db->insert($table_name => $columns_in_hashref);
+    my $last_insert_id = $db->insert($table_name => $columns_in_hashref);
 
 Insert a data simply.
 
