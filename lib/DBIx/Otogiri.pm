@@ -31,7 +31,9 @@ sub new {
 
 sub row_class {
     my ($self, $class_name) = @_;
-    $self->row_class_schema($class_name);
+    if ($class_name) {
+        $self->row_class_schema($class_name);
+    }
     return $self;
 }
 
@@ -75,7 +77,7 @@ sub search_by_sql {
 
     my @binds = @{$binds_aref || []};
     my $dbh = $self->dbh;
-    my $row_class = $self->row_class;
+    my $row_class = $self->row_class_schema;
     my $rtn = $row_class ? $dbh->select_all_as($row_class, $sql, @binds) : $dbh->select_all($sql, @binds);
     $rtn ? $self->_inflate_rows($table, @$rtn) : ();
 }
@@ -84,7 +86,7 @@ sub single {
     my ($self, $table, $param, @opts) = @_;
     my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
     my $dbh = $self->dbh;
-    my $row_class = $self->row_class;
+    my $row_class = $self->row_class_schema;
     my $row = $row_class ? $dbh->select_row_as($row_class, $sql, @binds) : $dbh->select_row($sql, @binds);
     $self->{inflate} ? $self->_inflate_rows($table, $row) : $row;
 }
