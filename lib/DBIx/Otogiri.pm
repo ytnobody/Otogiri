@@ -5,7 +5,7 @@ use warnings;
 
 use Class::Accessor::Lite (
     ro => [qw/connect_info strict/],
-    rw => [qw/maker owner_pid/],
+    rw => [qw/maker owner_pid row_class_schema/],
     new => 0,
 );
 
@@ -26,6 +26,18 @@ sub new {
     $self->{dbh}   = DBIx::Sunny->connect(@{$self->{connect_info}});
     $self->{maker} = SQL::Maker->new(driver => $self->{dsn}{driver}, strict => $strict);
     $self->owner_pid($$);
+    return $self;
+}
+
+sub row_class {
+    my ($self, $class_name) = @_;
+    $self->row_class_schema($class_name);
+    return $self;
+}
+
+sub no_row_class {
+    my ($self) = @_;
+    delete $self->{row_class};
     return $self;
 }
 
@@ -62,14 +74,18 @@ sub search_by_sql {
     ) unless wantarray;
 
     my @binds = @{$binds_aref || []};
-    my $rtn = $self->dbh->select_all($sql, @binds);
+    my $dbh = $self->dbh;
+    my $row_class = $self->row_class;
+    my $rtn = $row_class ? $dbh->select_all_as($row_class, $sql, @binds) : $dbh->select_all($sql, @binds);
     $rtn ? $self->_inflate_rows($table, @$rtn) : ();
 }
 
 sub single {
     my ($self, $table, $param, @opts) = @_;
     my ($sql, @binds) = $self->maker->select($table, ['*'], $param, @opts);
-    my $row = $self->dbh->select_row($sql, @binds);
+    my $dbh = $self->dbh;
+    my $row_class = $self->row_class;
+    my $row = $row_class ? $dbh->select_row_as($row_class, $sql, @binds) : $dbh->select_row($sql, @binds);
     $self->{inflate} ? $self->_inflate_rows($table, $row) : $row;
 }
 
