@@ -209,7 +209,26 @@ DBIx::Otogiri - Core of Otogiri
     for my $r (@rows) {
         printf "Title: %s \nPrice: %s yen\n", $r->{title}, $r->{price};
     }
+
+    # If you using perl 5.38 or later, you can use class feature.
+    class Book {
+        field $id :param;
+        field $title :param;
+        field $author :param;
+        field $price :param;
+        field $created_at :param;
+        field $updated_at :param;
+
+        method title {
+            return $title;
+        }
+    };
+    my $book = $db->row_class('Book')->single(book => {id => 1}); # $book is Book object.
+    say $book->title; # => say book title.
     
+    my $hash = $db->no_row_class->single(book => {id => 1}); # $hash is HASH reference.
+    say $hash->{title}; # => say book title.
+
     $db->update(book => [author => 'oreore'], {author => 'me'});
     
     $db->delete(book => {author => 'me'});
@@ -321,6 +340,31 @@ Select from specified table. Then, returns first of matched rows.
     my @rows = $db->search_by_sql($sql, \@bind_vals [, $table_name]);
 
 Select by specified SQL. Then, returns matched rows as array. $table_name is optional and used for inflate parameter.
+
+=head2 row_class
+
+    class Book {
+        field $id :param;
+        field $title :param;
+        field $author :param;
+        field $price :param;
+        field $created_at :param;
+        field $updated_at :param;
+
+        method title {
+            return $title;
+        }
+    };
+
+    my $db = $db->row_class($class_name);
+
+Set row class name. If you set row class name, you can receive result as row class object.
+
+=head2 no_row_class
+
+    my $db = $db->no_row_class;
+
+Unset row class name. If you unset row class name, you can receive result as HASH reference.
 
 =head2 update
 
