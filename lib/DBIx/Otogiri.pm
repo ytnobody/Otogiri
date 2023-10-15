@@ -39,7 +39,7 @@ sub row_class {
 
 sub no_row_class {
     my ($self) = @_;
-    delete $self->{row_class};
+    delete $self->{row_class_schema};
     return $self;
 }
 
