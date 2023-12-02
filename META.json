@@ -60,7 +60,8 @@
             "Test::Exception" : "0",
             "Test::More" : "0.98",
             "Test::Requires" : "0",
-            "Test::Time" : "0"
+            "Test::Time" : "0",
+            "URI::db" : "0"
          }
       }
    },
