@@ -22,8 +22,7 @@
          "eg",
          "examples",
          "author",
-         "builder",
-         ".devcontainer"
+         "builder"
       ]
    },
    "prereqs" : {
@@ -85,6 +84,6 @@
       "papix <mail@papix.net>",
       "ytnobody <ytnobody@ytnobody.net>"
    ],
-   "x_serialization_backend" : "JSON::PP version 4.16",
+   "x_serialization_backend" : "JSON::PP version 4.02",
    "x_static_install" : 1
 }

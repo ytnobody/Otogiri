@@ -120,6 +120,9 @@ sub delete {
 
 sub update {
     my ($self, $table, $param, @opts) = @_;
+    if (ref $param eq 'HASH') {
+        $param = [%$param];
+    }
     $param = $self->_deflate_param($table, $param);
     my ($sql, @binds) = $self->maker->update($table, $param, @opts);
     $self->dbh->query($sql, @binds);
