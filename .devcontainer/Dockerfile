@@ -18,3 +18,6 @@ RUN ./.plenv/bin/plenv install 5.30.0
 RUN ./.plenv/bin/plenv global 5.30.0  
 RUN ./.plenv/bin/plenv rehash 
 RUN ./.plenv/bin/plenv install-cpanm
+
+### install minilla
+RUN ./.plenv/shims/cpanm Minilla
