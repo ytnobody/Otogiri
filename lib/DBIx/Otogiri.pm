@@ -240,7 +240,7 @@ DBIx::Otogiri - Core of Otogiri
     my $hash = $db->no_row_class->single(book => {id => 1}); # $hash is HASH reference.
     say $hash->{title}; # => say book title.
 
-    $db->update(book => [author => 'oreore'], {author => 'me'});
+    $db->update(book => {author => 'oreore'}, {author => 'me'});
     
     $db->delete(book => {author => 'me'});
     
@@ -379,7 +379,7 @@ Unset row class name. If you unset row class name, you can receive result as HAS
 
 =head2 update
 
-    $db->update($table_name => [update_col_1 => $new_value_1, ...], $conditions_in_hashref);
+    $db->update($table_name => {update_col_1 => $new_value_1, ...}, $conditions_in_hashref);
 
 Update rows that matched to $conditions_in_hashref.
 
