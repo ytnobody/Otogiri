@@ -21,3 +21,6 @@ RUN ./.plenv/bin/plenv install-cpanm
 
 ### install minilla
 RUN ./.plenv/shims/cpanm Minilla
+
+### install develop dependencies
+RUN sudo apt-get install libpq-dev libmysqlclient-dev -y
